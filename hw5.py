@@ -32,10 +32,10 @@ class Model(object):
         """build_model Build the model using numpynet API
         """
         # TODO: Finish this function
-        self.dense1 = Dense(self.input_dim, 256)
-        self.dense2 = Dense(256, 128)
-        self.dense3 = Dense(128, 128)
-        self.dense4 = Dense(128,self.output_dim)
+        self.dense1 = Dense(self.input_dim, 100)
+        self.dense2 = Dense(100, 100)
+        self.dense3 = Dense(100, 100)
+        self.dense4 = Dense(100,self.output_dim)
         self.elu1 = ELU(0.9)
         self.elu2 = ELU(0.9)
         self.elu3 = ELU(0.9)
