@@ -152,8 +152,8 @@ class Dense(Layer):
         # return dx
         # raise NotImplementedError
         x = self.cache
-        self.dW = np.divide(np.dot(x.T, grad), x.shape[0])
-        self.db = np.divide(np.sum(grad, axis=0), x.shape[0])
+        self.dW = np.dot(x.T, grad) / x.shape[0]
+        self.db = np.sum(grad, axis=0) / x.shape[0]
         return np.dot(grad, self._W.T)
 
     def update(self, lr):

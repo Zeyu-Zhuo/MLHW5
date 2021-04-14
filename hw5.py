@@ -140,6 +140,7 @@ def train(model,
             the model (default: {accuracy_score})
     """
     # TODO: Finish this function
+    flag = True
     train_loss_res = []
     train_acc_res = []
     val_loss_res = []
@@ -181,8 +182,9 @@ def train(model,
         val_acc /= N_val
         val_loss_res.append(val_loss)
         val_acc_res.append(val_acc)
-        if(val_acc>0.95):
-            lr /= 5
+        if(val_acc>0.95 and flag):
+            flag = False
+            lr /= 10
         print("epoch: {}, train acc: {:.2f}%, train loss: {:.3f}, val acc: {:.2f}%, val loss: {:.3f}" .format(
             index+1, train_acc*100, train_loss, val_acc*100, val_loss))
     return train_loss_res, train_acc_res, val_loss_res, val_acc_res
