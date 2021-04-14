@@ -32,13 +32,15 @@ class Model(object):
         """build_model Build the model using numpynet API
         """
         # TODO: Finish this function
-        self.dense1 = Dense(self.input_dim, 100)
-        self.dense2 = Dense(100, 100)
-        self.dense3 = Dense(100, 100)
-        self.dense4 = Dense(100,self.output_dim)
+        self.dense1 = Dense(self.input_dim, 256)
+        self.dense2 = Dense(256, 128)
+        self.dense3 = Dense(128, 64)
+        self.dense4 = Dense(64, 32)
+        self.dense5 = Dense(32,self.output_dim)
         self.elu1 = ELU(0.9)
         self.elu2 = ELU(0.9)
         self.elu3 = ELU(0.9)
+        self.elu4 = ELU(0.9)
         
         
     def __call__(self, X):
@@ -60,7 +62,9 @@ class Model(object):
         out = self.elu2(out)
         out = self.dense3(out)
         out = self.elu3(out)
-        logits = self.dense4(out)
+        out = self.dense4(out)
+        out = self.elu4(out)
+        logits = self.dense5(out)
         return logits
         raise NotImplementedError
 
@@ -86,7 +90,8 @@ class Model(object):
         if(istraining):
             loss = self.loss_fn(logits,labels)
             grad = self.loss_fn.bprop()
-            grad = self.dense4.bprop(grad)
+            grad = self.dense5.bprop(grad)
+            grad = self.dense4.bprop(self.elu4.bprop()*grad)
             grad = self.dense3.bprop(self.elu3.bprop()*grad)
             grad = self.dense2.bprop(self.elu2.bprop()*grad)
             grad = self.dense1.bprop(self.elu1.bprop()*grad)
@@ -104,6 +109,7 @@ class Model(object):
         self.dense2.update(lr)
         self.dense3.update(lr)
         self.dense4.update(lr)
+        self.dense5.update(lr)
         # raise NotImplementedError
 
 
@@ -175,6 +181,8 @@ def train(model,
         val_acc /= N_val
         val_loss_res.append(val_loss)
         val_acc_res.append(val_acc)
+        if(val_acc>0.95):
+            lr /= 5
         print("epoch: {}, train acc: {:.2f}%, train loss: {:.3f}, val acc: {:.2f}%, val loss: {:.3f}" .format(
             index+1, train_acc*100, train_loss, val_acc*100, val_loss))
     return train_loss_res, train_acc_res, val_loss_res, val_acc_res
